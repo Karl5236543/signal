@@ -39,7 +39,7 @@ class GUIMonitor:
         
         pygame.display.update()
             
-    def _convert_color(self, block):
+    def _convert_color(self, current_block):
         if block.is_input():
             if block.is_active():
                 return 

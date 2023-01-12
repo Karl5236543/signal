@@ -1,8 +1,13 @@
 
 
 import random
-from core.block import Block
-from core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_TRANSMITTER
+from src.core.block import Block
+from src.core.constants import ALL_BLOCK_TYPES, BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_TRANSMITTER
+
+
+block_types_map = [
+    BLOCK_TYPE_INPUT: InputBlock
+]
 
 
 class Map:
@@ -58,6 +63,9 @@ class Map:
                     block.activate()
                 else:
                     block.deactivate() 
+
+    def get_around_blocks(self, block, allow_block_types=ALL_BLOCK_TYPES):
+        return [self.get_block(cords) for cords in block.get_around_cords() if self.is_block_here(cords)]
 
     def update_map_state(self):
         for _, block in self._field.items():

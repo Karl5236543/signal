@@ -1,49 +1,54 @@
 from core.constants import \
-    BLOCK_STATE_ACTIVATE, BLOCK_STATE_DEACTIVATE, BLOCK_STATE_FADING, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_TRANSMITTER
+    ALLOW_TRANSFER_SIGNAL, BLOCK_STATE_ACTIVATE, BLOCK_STATE_CYCLE, BLOCK_STATE_DEACTIVATE, BLOCK_STATE_FADING, BLOCK_TYPE_INPUT, \
+    BLOCK_TYPE_OUTPUT, BLOCK_TYPE_TRANSMITTER
 
 
 class Block:
     
-    def __init__(self, cords, type, state=BLOCK_STATE_DEACTIVATE):
+    def __init__(self, cords, surface, state=BLOCK_STATE_DEACTIVATE):
         self._state = state
         self._cords = cords
-        self._type = type
+        self._surface = surface
 
-    def get_copy(self):
-        return Block(self._cords, self._type, self._state)
+    def update_state(self):
+        if self.allow_change_state():
+            self.set_next_state()
 
-    def update_state(self, around_blocks):
-        if self.is_transmitter():
-            if self.is_fading():
-                self.deactivate()
-
-            elif self.is_active():
-                self.repay()
-
-            else:
-                around_blocks = [block for block in around_blocks if block.is_transmitter()]
-
-                for block in around_blocks:
-                    if block.is_active():
-                        self.activate()
-                        break
-        
-        if self.is_output():
-            around_blocks = [block for block in around_blocks if block.is_transmitter()]
-
-            for block in around_blocks:
-                if block.is_active():
-                    self.activate()
-                    break
+    def allow_change_state(self):
+        return \
+            self.is_active() and self.allow_fading() or \
+            self.is_fading() and self.allow_deactivate() or \
+            self.is_deactivated() and self.allow_activate()
+    
+    def set_next_state(self):
+        for index, state in BLOCK_STATE_CYCLE:
+            if self.get_state() == state:
+                next_state_index = index + 1 if index < len(BLOCK_STATE_CYCLE) - 1 else 0
+                return BLOCK_STATE_CYCLE[next_state_index]
+    
+    def allow_fading(self):
+        raise NotImplementedError
+    
+    def allow_deactivate(self):
+        raise NotImplementedError
+    
+    def allow_activate(self):
+        raise NotImplementedError
     
     def is_transmitter(self):
-        return self._type == BLOCK_TYPE_TRANSMITTER
+        return self.get_type() == BLOCK_TYPE_TRANSMITTER
 
     def is_output(self):
-        return self._type == BLOCK_TYPE_OUTPUT
+        return self.get_type() == BLOCK_TYPE_OUTPUT
+    
+    def is_input(self):
+        return self.get_type() == BLOCK_TYPE_INPUT
 
     def get_type(self):
-        return self._type
+        raise NotImplementedError
+    
+    def get_state(self):
+        return self._state
 
     def get_around_cords(self):
         return [
@@ -61,10 +66,7 @@ class Block:
 
     def repay(self):
         self._state = BLOCK_STATE_FADING
-
-    def get_state(self):
-        return self._state
-
+            
     def is_deactivated(self):
         return self._state == BLOCK_STATE_DEACTIVATE
     
@@ -91,3 +93,53 @@ class Block:
     
     def set_y(self, y):
         self._cords[1] = y
+        
+    def get_copy(self):
+        return Block(self._cords, self.get_type(), self._surface, self._state)
+        
+    # def type_in(self, types):
+    #     return self._type in types
+        
+    #     if self.is_output():
+    #         around_blocks = [block for block in around_blocks if block.is_transmitter()]
+
+    #         for block in around_blocks:
+    #             if block.is_active():
+    #                 self.activate()
+    #                 break
+    
+        
+class TransmitterBlock(Block):
+    
+    def get_type(self):
+        return BLOCK_TYPE_TRANSMITTER
+    
+    def allow_fading(self):
+        return True
+    
+    def allow_deactivate(self):
+        return True
+    
+    def allow_activate(self):
+        around_blocks = self._map.get_around_blocks(allow_block_types=ALLOW_TRANSFER_SIGNAL)
+
+        for block in around_blocks:
+            if block.is_active():
+                return True
+            
+            
+class InputBlock(TransmitterBlock):
+    
+    def get_type(self):
+        return BLOCK_TYPE_INPUT
+
+
+class OutputBlock(TransmitterBlock):
+    
+    def get_type(self):
+        return BLOCK_TYPE_OUTPUT
+    
+    def allow_deactivate(self):
+        return False
+    
+    
