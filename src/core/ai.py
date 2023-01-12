@@ -1,5 +1,5 @@
 import random
-from core.constants import BLOCK_TYPE_TRANSMITTER
+from core.constants import ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_TRANSMITTER
 from core.map import Map
 
 class AI:
@@ -8,8 +8,8 @@ class AI:
     MAP_HEIGHT = 50
     BLOCKS_COUNT = 300
     MAP_UPDATE_ITERATION_COUNT = 250
-    MUTATE_BLOCK_CREATE_COUNT = 5
-    MUTATE_BLOCK_DELETE_COUNT = 5
+    BLOCK_CREATE_MAX_COUNT = 5
+    BLOCK_DELETE_MAX_COUNT = 5
 
     def __init__(self, input_labels, output_labels, map=None):
         self.input_labels = input_labels
@@ -32,12 +32,27 @@ class AI:
         self._map.reset_output()
         return output
 
-    # TODO:
     def mutate(self):
-        if self._map.get_blocks_count() < self.MUTATE_BLOCK_DELETE_COUNT or random.choice((True, False)):
+        
+        blocks_to_create_count = random.randint(0, self.BLOCK_CREATE_MAX_COUNT)
+        blocks_to_delete_count = random.randint(0, self.BLOCK_DELETE_MAX_COUNT)
+        
+        can_add_blocks = self._map.can_add_blocks(blocks_to_create_count)
+        can_delete_blocks = self._map.can_delete_blocks(blocks_to_delete_count)
+        
+        if can_add_blocks and can_delete_blocks:
+            random_action = random.choice((True, False))
+            
+            if random_action:
+                self._map.scatter_blocks(BLOCK_TYPE_TRANSMITTER, self.MUTATE_BLOCK_CREATE_COUNT)
+            else:
+                self._map.remove_rand_blocks(ALLOW_DELETE_BLOCK_TYPES, self.MUTATE_BLOCK_DELETE_COUNT)
+                
+        elif can_add_blocks:
             self._map.scatter_blocks(BLOCK_TYPE_TRANSMITTER, self.MUTATE_BLOCK_CREATE_COUNT)
+        
         else:
-            self._map.remove_rand_blocks(BLOCK_TYPE_TRANSMITTER, self.MUTATE_BLOCK_DELETE_COUNT)
+            self._map.remove_rand_blocks(ALLOW_DELETE_BLOCK_TYPES, self.MUTATE_BLOCK_DELETE_COUNT)
 
     def get_copy(self):
         return AI(
