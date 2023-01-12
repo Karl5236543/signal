@@ -35,15 +35,6 @@ class Block:
     def allow_activate(self):
         raise NotImplementedError
     
-    def is_transmitter(self):
-        return self.get_type() == BLOCK_TYPE_TRANSMITTER
-
-    def is_output(self):
-        return self.get_type() == BLOCK_TYPE_OUTPUT
-    
-    def is_input(self):
-        return self.get_type() == BLOCK_TYPE_INPUT
-
     def get_type(self):
         raise NotImplementedError
     
@@ -96,17 +87,6 @@ class Block:
         
     def get_copy(self):
         return Block(self._cords, self.get_type(), self._surface, self._state)
-        
-    # def type_in(self, types):
-    #     return self._type in types
-        
-    #     if self.is_output():
-    #         around_blocks = [block for block in around_blocks if block.is_transmitter()]
-
-    #         for block in around_blocks:
-    #             if block.is_active():
-    #                 self.activate()
-    #                 break
     
         
 class TransmitterBlock(Block):

@@ -5,6 +5,7 @@ from src.core.block import Block
 from src.core.constants import ALL_BLOCK_TYPES, BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_TRANSMITTER
 from src.core.block import InputBlock, OutputBlock, TransmitterBlock
 
+
 block_types_map = {
     BLOCK_TYPE_INPUT: InputBlock,
     BLOCK_TYPE_OUTPUT: InputBlock,
@@ -28,8 +29,8 @@ class Map:
     def get_block_class_by_type(block_type):
         return block_types_map[block_type]
         
-    def get_blocks_count(self):
-        return len(self._field) - (len(self.input_cords) + len(self.output_cords))
+    def get_blocks_count(self, allow_block_types=ALL_BLOCK_TYPES):
+        return sum([len(items) for items in [self._block_types_map[block_type] for block_type in allow_block_types]]) 
 
     def _init_empty_cords(self):
         for y in range(self.height):
@@ -80,13 +81,13 @@ class Map:
                 else:
                     block.deactivate() 
 
-    def get_around_blocks(self, block, allow_block_types=ALL_BLOCK_TYPES):
-        return [self.get_block(cords) for cords in block.get_around_cords() if self.is_block_here(cords)]
+    def get_around_blocks(self, block):
+        return [self.get_block(cords) for cords in 
+                self.extract_existed_cords(block.get_around_cords()) if self.is_block_here(cords)]
 
     def update_map_state(self):
         for _, block in self._field.items():
-            around_block = [self.get_block(cords) for cords in block.get_around_cords() if self.is_block_here(cords)]
-            block.update_state(around_block)
+            block.update_state()
 
     def extract_existed_cords(self, cords_scope):
         return [(x, y) for (x, y) in cords_scope if x < self.width and y < self.height]
@@ -126,12 +127,12 @@ class Map:
 
     def get_random_no_empty_cords(self, allow_block_types):
         block_type = random.choice(allow_block_types)
-        cords = random.choice(self.block_types_map[block_type])
-        return self._field[cords]
+        cords = random.choice(list(self.block_types_map[block_type]))
+        return cords
 
     def add_block(self, cords, type=BLOCK_TYPE_TRANSMITTER):
         BlockClass = self.get_block_class_by_type(type)
-        new_block = BlockClass(cords)
+        new_block = BlockClass(cords, self)
         self._field[cords] = new_block
         self._empty_cords.remove(cords)
         self._block_types_map[new_block.get_type()][new_block.get_cords()] = new_block
