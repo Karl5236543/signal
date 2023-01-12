@@ -32,6 +32,7 @@ class AI:
         self._map.reset_output()
         return output
 
+    # TODO:
     def mutate(self):
         if self._map.get_blocks_count() < self.MUTATE_BLOCK_DELETE_COUNT or random.choice((True, False)):
             self._map.scatter_blocks(BLOCK_TYPE_TRANSMITTER, self.MUTATE_BLOCK_CREATE_COUNT)
