@@ -21,12 +21,20 @@ class Block:
                 self.repay()
 
             else:
-                around_transmitters = [block for block in around_blocks if block.is_transmitter()]
+                around_blocks = [block for block in around_blocks if block.is_transmitter()]
 
-                for block in around_transmitters:
+                for block in around_blocks:
                     if block.is_active():
                         self.activate()
                         break
+        
+        if self.is_output():
+            around_blocks = [block for block in around_blocks if block.is_transmitter()]
+
+            for block in around_blocks:
+                if block.is_active():
+                    self.activate()
+                    break
     
     def is_transmitter(self):
         return self._type == BLOCK_TYPE_TRANSMITTER

@@ -5,4 +5,3 @@ BLOCK_STATE_DEACTIVATE = 'block_state_deactivate'
 
 BLOCK_TYPE_TRANSMITTER = 'block_type_transmitter'
 BLOCK_TYPE_OUTPUT = 'block_type_output'
-BLOCK_TYPE_INPUT = 'block_type_input'

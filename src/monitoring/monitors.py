@@ -29,14 +29,32 @@ class GUIMonitor:
             self.surface.fill(COLOR_BLACK)
         
         self.surface.fill(COLOR_BLACK)
+        
         for cords, block in map_state.get_map_state():
             pygame.draw.rect(
                 self.surface,
                 self._convert_color(block),
                 (*(self._map.convert_cords((x, y))),
                 BLOCK_WIDTH, BLOCK_HEIGHT))
+        
+        pygame.display.update()
             
     def _convert_color(self, block):
+        if block.is_input():
+            if block.is_active():
+                return 
+            else:
+                return
+ 
+        elif block.is_output():
+            if block.is_active():
+                return
+            else:
+                return
+            
+        elif block.is_transmitter():
+            
+            
         return self.color_map.get(block.get_type())
             
         

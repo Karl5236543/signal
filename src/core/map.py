@@ -50,13 +50,14 @@ class Map:
 
     def set_input(self, input):
         for input_label, cords in self.input_cords.items():
-            block = self.get_block(cords)
+            if self.is_block_here(cords):
+                block = self.get_block(cords)
 
-            new_state = input[input_label]
-            if new_state == 1:
-                block.activate()
-            else:
-                block.deactivate() 
+                new_state = input[input_label]
+                if new_state == 1:
+                    block.activate()
+                else:
+                    block.deactivate() 
 
     def update_map_state(self):
         for _, block in self._field.items():
