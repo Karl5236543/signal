@@ -110,3 +110,6 @@ class Map:
     
     def get_block(self, cords):
         return self._field[cords]
+    
+    def get_map_state(self):
+        yield from self._field

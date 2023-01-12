@@ -26,6 +26,7 @@ class AI:
         
         for _ in range(self.MAP_UPDATE_ITERATION_COUNT):
             self._map.update_map_state()
+            self._monitor.render(self._map)
         
         output = self._map.get_output()
         self._map.reset_output()
@@ -43,3 +44,6 @@ class AI:
             input_labels=self.input_labels,
             output_labels=self.output_labels
         )
+        
+    def set_monitors(self, monitors):
+        self._monitors = monitors
