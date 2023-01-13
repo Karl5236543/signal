@@ -8,8 +8,8 @@ class AI:
 
     MAP_WIDTH = 20
     MAP_HEIGHT = 20
-    BLOCKS_COUNT = 300
-    MAP_UPDATE_ITERATION_COUNT = 20
+    BLOCKS_COUNT = 300 
+    MAP_UPDATE_ITERATION_COUNT = 30
     BLOCK_CREATE_MAX_COUNT = 5
     BLOCK_DELETE_MAX_COUNT = 5
 
@@ -35,8 +35,8 @@ class AI:
             for monitor in self._monitors:
                 monitor.render_map(self.unique_id, self._map)
             
-            input()
-            print(count)
+            # input()
+            # print(count)
             self._map.update_map_state()
         
         output = self._map.get_output()
@@ -66,11 +66,13 @@ class AI:
             self._map.remove_random_blocks(ALLOW_DELETE_BLOCK_TYPES, blocks_to_delete_count)
 
     def get_copy(self):
-        return AI(
+        ai = AI(
             map=self._map.get_copy(),
             input_labels=self.input_labels,
             output_labels=self.output_labels
         )
+        ai.set_monitors(self._monitors)
+        return ai
         
     def set_monitors(self, monitors):
         self._monitors = monitors

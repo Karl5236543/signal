@@ -20,7 +20,7 @@ if __name__ == '__main__':
         # {'a': 0, 'b': 0},
     )
 
-    for _ in range(10):
+    for _ in range(1000):
         for input_data in input_set:
             output = ai.find_result(input_data)
         ai.mutate()

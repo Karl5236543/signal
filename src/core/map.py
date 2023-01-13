@@ -5,7 +5,7 @@ from src.core.constants import ALL_BLOCK_TYPES, ALLOW_CREATE_BLOCK_TYPES, ALLOW_
 from src.core.block import InputBlock, OutputBlock, TransmitterBlock, RegulatorBlock
 
 
-block_types_map = {
+block_types2class_map = {
     BLOCK_TYPE_INPUT: InputBlock,
     BLOCK_TYPE_OUTPUT: OutputBlock,
     BLOCK_TYPE_TRANSMITTER: TransmitterBlock,
@@ -27,7 +27,7 @@ class Map:
         self.output_cords = {}
         
     def get_block_class_by_type(self, block_type):
-        return block_types_map[block_type]
+        return block_types2class_map[block_type]
         
     def get_blocks_count(self, allow_block_types=ALL_BLOCK_TYPES):
         return sum([len(items) for items in [self._block_types_map[block_type] for block_type in allow_block_types]])
@@ -140,8 +140,9 @@ class Map:
         return cords
 
     def get_random_no_empty_cords(self, allow_block_types):
-        block_type = random.choice(allow_block_types)
-        cords = random.choice(list(block_types_map[block_type]))
+        block_type = random.choice(
+            [block_type for block_type in allow_block_types if self._block_types_map[block_type]])
+        cords = random.choice(list(self._block_types_map[block_type]))
         return cords
 
     def add_block(self, cords, type=BLOCK_TYPE_TRANSMITTER):
