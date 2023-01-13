@@ -12,6 +12,7 @@ class Calibrator:
         self.base_seed = seed
         self.seed_pool = self.init_pool()
         self.seed_result = {}
+        self._monitors = []
         
     def init_pool(self):
         seed_pool = {}
@@ -26,7 +27,6 @@ class Calibrator:
     def run_test(self, seed):
         for input in self.driver.yield_input():
             output = seed.find_result(input)
-            print(f'input: {input}\toutput: {output}\r')
             self.driver.send_output(output)
         
         return self.driver.read_result()
@@ -34,7 +34,6 @@ class Calibrator:
     def run(self):
         while True:
             for id, ai in self.seed_pool.items():
-                print(f'run test for id={id}...')
                 score = self.run_test(ai)
                 self.seed_result[id] = score
 
@@ -70,3 +69,6 @@ class Calibrator:
         id = self.id_counter
         self.id_counter += 1
         return id
+    
+    def set_monitors(self, monitors):
+        self._monitors = monitors

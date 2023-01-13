@@ -1,9 +1,11 @@
 import pygame
 from pygame.locals import *
-from core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_TRANSMITTER
-
+from core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER
 from src.monitoring.constants import BLOCK_HEIGHT, BLOCK_WIDTH, COLOR_BLACK
 
+pygame.init()
+FramePerSec = pygame.time.Clock()
+pygame.display.set_caption("Example")
 
 class ConsoleMonitor:
     pass
@@ -11,50 +13,49 @@ class ConsoleMonitor:
 
 class GUIMonitor:
     
-    color_map = {
-        BLOCK_TYPE_TRANSMITTER: (),
-        BLOCK_TYPE_OUTPUT: (),
-        BLOCK_TYPE_INPUT: (),
-    }
+    def __init__(self, bot_count):
+        self.surface = pygame.display.set_mode(
+            (self._map._width * bot_count * BLOCK_WIDTH, self._map._height * bot_count * BLOCK_HEIGHT))
+        self.surface.fill(COLOR_BLACK)
     
-    def __init__(self):
-        pygame.init()
-        FramePerSec = pygame.time.Clock()
-        pygame.display.set_caption("Example")
-        self.is_surface_created = False
-    
-    def render(self, map_state):
-        if not self.is_surface_created:
-            self.surface = pygame.display.set_mode((self._map._width * BLOCK_WIDTH, self._map._height * BLOCK_HEIGHT))
-            self.surface.fill(COLOR_BLACK)
-        
+    def render_map(self, uuid, map_state):
         self.surface.fill(COLOR_BLACK)
         
         for cords, block in map_state.get_map_state():
             pygame.draw.rect(
                 self.surface,
                 self._convert_color(block),
-                (*(self._map.convert_cords((x, y))),
-                BLOCK_WIDTH, BLOCK_HEIGHT))
+                pygame.Rect(*self.convert_cords(uuid, cords), BLOCK_WIDTH, BLOCK_HEIGHT)
+            )
         
         pygame.display.update()
             
-    def _convert_color(self, current_block):
-        if block.is_input():
+    def convert_cords(uuid, cords):
+        return cords[0] * BLOCK_WIDTH, cords[1] * BLOCK_HEIGHT
+    
+    def _convert_color(self, block):
+        if block.get_type() == BLOCK_TYPE_INPUT:
             if block.is_active():
-                return 
+                return (255, 241, 0)
             else:
-                return
+                return (128, 124, 55)
  
-        elif block.is_output():
+        elif block.get_type() == BLOCK_TYPE_OUTPUT:
             if block.is_active():
-                return
+                return (200, 0, 255)
             else:
-                return
-            
-        elif block.is_transmitter():
-            
-            
-        return self.color_map.get(block.get_type())
-            
+                return (129, 70, 145)
         
+        elif block.get_type() == BLOCK_TYPE_TRANSMITTER:
+            if block.is_active():
+                return (17, 12, 242)
+            elif block.is_fading():
+                return (149, 147, 250)
+            else:
+                return (255, 255, 255)
+        
+        elif block.get_type() == BLOCK_TYPE_REGULATOR:
+            if block.is_active():
+                return (255, 0, 0)
+            else:
+                return (0, 255, 26)

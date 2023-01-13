@@ -1,4 +1,5 @@
 import random
+import uuid
 from core.constants import ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_TRANSMITTER
 from core.map import Map
 
@@ -12,9 +13,13 @@ class AI:
     BLOCK_DELETE_MAX_COUNT = 5
 
     def __init__(self, input_labels, output_labels, map=None):
+        
+        self.unique_id = uuid.uuid4()
+        
         self.input_labels = input_labels
         self.output_labels = output_labels
         self._map = map or self.init_map(self.input_labels, self.output_labels)
+        self._monitors = []
 
     def init_map(self, input_labels, output_labels):
         new_map = Map(self.MAP_WIDTH, self.MAP_HEIGHT)
@@ -26,7 +31,9 @@ class AI:
         
         for _ in range(self.MAP_UPDATE_ITERATION_COUNT):
             self._map.update_map_state()
-            self._monitor.render(self._map)
+            
+            for monitor in self._monitors:
+                monitor.render_map(self.unique_id, self._map)
         
         output = self._map.get_output()
         self._map.reset_output()

@@ -111,9 +111,7 @@ class TransmitterBlock(Block):
             if block.is_active():
                 activate = True
         
-        return activate
-                
-        
+        return activate         
             
             
 class InputBlock(TransmitterBlock):
@@ -129,7 +127,6 @@ class OutputBlock(TransmitterBlock):
     
     def allow_deactivate(self):
         return False
-    
     
     
 class RegulatorBlock(TransmitterBlock):

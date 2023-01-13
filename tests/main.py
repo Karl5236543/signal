@@ -8,8 +8,9 @@ if __name__ == '__main__':
     input_labels = ('a', 'b')
     output_labels = ('y', )
     
+    monitor = GUIMonitor()
     ai = AI(input_labels, output_labels)
-    ai.set_monitors([ConsoleMonitor(), GUIMonitor()])
+    ai.set_monitors([monitor])
     # driver = DriverTest
 
     input_set = (
