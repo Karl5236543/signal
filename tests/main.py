@@ -8,20 +8,22 @@ if __name__ == '__main__':
     input_labels = ('a', 'b')
     output_labels = ('y', )
     
-    monitor = GUIMonitor()
+    monitor = GUIMonitor(1)
     ai = AI(input_labels, output_labels)
     ai.set_monitors([monitor])
     # driver = DriverTest
 
     input_set = (
-        {'a': 0, 'b': 0},
-        {'a': 0, 'b': 1},
-        {'a': 1, 'b': 0},
         {'a': 1, 'b': 1},
+        # {'a': 1, 'b': 0},
+        # {'a': 1, 'b': 1},
+        # {'a': 0, 'b': 0},
     )
 
-    for input_data in input_set:
-        output = ai.find_result(input_data)
+    for _ in range(10):
+        for input_data in input_set:
+            output = ai.find_result(input_data)
+        ai.mutate()
 
 
     # calibrator = Calibrator(ai, driver)

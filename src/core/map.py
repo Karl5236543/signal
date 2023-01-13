@@ -1,15 +1,15 @@
 
 
 import random
-from src.core.block import Block
-from src.core.constants import ALL_BLOCK_TYPES, ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_TRANSMITTER
-from src.core.block import InputBlock, OutputBlock, TransmitterBlock
+from src.core.constants import ALL_BLOCK_TYPES, ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER
+from src.core.block import InputBlock, OutputBlock, TransmitterBlock, RegulatorBlock
 
 
 block_types_map = {
     BLOCK_TYPE_INPUT: InputBlock,
-    BLOCK_TYPE_OUTPUT: InputBlock,
-    BLOCK_TYPE_TRANSMITTER: InputBlock,
+    BLOCK_TYPE_OUTPUT: OutputBlock,
+    BLOCK_TYPE_TRANSMITTER: TransmitterBlock,
+    BLOCK_TYPE_REGULATOR: RegulatorBlock,
 }
 
 
@@ -19,14 +19,14 @@ class Map:
         self.width = width
         self.height = height
 
-        self._field = None
+        self._field = {}
         self._block_types_map = {block_type: {} for block_type in ALL_BLOCK_TYPES}
         
-        self._empty_cords = None
-        self.input_cords = None
-        self.output_cords = None
+        self._empty_cords = set()
+        self.input_cords = {}
+        self.output_cords = {}
         
-    def get_block_class_by_type(block_type):
+    def get_block_class_by_type(self, block_type):
         return block_types_map[block_type]
         
     def get_blocks_count(self, allow_block_types=ALL_BLOCK_TYPES):
@@ -70,6 +70,7 @@ class Map:
         for _, cords in self.output_cords.items():
             block = self.get_block(cords)
             block.deactivate()
+            block.push_new_state()
 
     def set_input(self, input):
         for input_label, cords in self.input_cords.items():
@@ -80,7 +81,8 @@ class Map:
                 if new_state == 1:
                     block.activate()
                 else:
-                    block.deactivate() 
+                    block.deactivate()
+                block.push_new_state()
 
     def get_around_blocks(self, block):
         return [self.get_block(cords) for cords in 
@@ -89,6 +91,10 @@ class Map:
     def update_map_state(self):
         for _, block in self._field.items():
             block.update_state()
+        
+        for _, block in self._field.items():
+            block.push_new_state()
+        
 
     def extract_existed_cords(self, cords_scope):
         return [(x, y) for (x, y) in cords_scope if x < self.width and y < self.height]
@@ -107,7 +113,7 @@ class Map:
         return len(self._empty_cords) >= count
     
     def can_delete_blocks(self, count):
-        return self.get_blocks_count(count, ALLOW_DELETE_BLOCK_TYPES) >= count
+        return self.get_blocks_count(ALLOW_DELETE_BLOCK_TYPES) >= count
         
     def get_copy(self):
         field_copy = {}
@@ -135,7 +141,7 @@ class Map:
 
     def get_random_no_empty_cords(self, allow_block_types):
         block_type = random.choice(allow_block_types)
-        cords = random.choice(list(self.block_types_map[block_type]))
+        cords = random.choice(list(block_types_map[block_type]))
         return cords
 
     def add_block(self, cords, type=BLOCK_TYPE_TRANSMITTER):
@@ -158,4 +164,4 @@ class Map:
         return self._field[cords]
     
     def get_map_state(self):
-        yield from self._field
+        return self._field

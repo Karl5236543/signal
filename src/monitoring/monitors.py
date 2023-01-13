@@ -1,7 +1,9 @@
 import pygame
 from pygame.locals import *
-from core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER
+from src.core.ai import AI
+from src.core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER
 from src.monitoring.constants import BLOCK_HEIGHT, BLOCK_WIDTH, COLOR_BLACK
+import time
 
 pygame.init()
 FramePerSec = pygame.time.Clock()
@@ -15,22 +17,21 @@ class GUIMonitor:
     
     def __init__(self, bot_count):
         self.surface = pygame.display.set_mode(
-            (self._map._width * bot_count * BLOCK_WIDTH, self._map._height * bot_count * BLOCK_HEIGHT))
+            (AI.MAP_WIDTH * bot_count * BLOCK_WIDTH, AI.MAP_HEIGHT * bot_count * BLOCK_HEIGHT))
         self.surface.fill(COLOR_BLACK)
     
     def render_map(self, uuid, map_state):
         self.surface.fill(COLOR_BLACK)
         
-        for cords, block in map_state.get_map_state():
+        for cords, block in map_state.get_map_state().items():
             pygame.draw.rect(
                 self.surface,
                 self._convert_color(block),
                 pygame.Rect(*self.convert_cords(uuid, cords), BLOCK_WIDTH, BLOCK_HEIGHT)
             )
-        
         pygame.display.update()
             
-    def convert_cords(uuid, cords):
+    def convert_cords(self, uuid, cords):
         return cords[0] * BLOCK_WIDTH, cords[1] * BLOCK_HEIGHT
     
     def _convert_color(self, block):

@@ -30,7 +30,9 @@ class Calibrator:
             self.driver.send_output(output)
         
         return self.driver.read_result()
-            
+    
+    # TODO:
+    # делать копии объектов в начальном состоянии (до начала подачи инпутов (до run_test))
     def run(self):
         while True:
             for id, ai in self.seed_pool.items():

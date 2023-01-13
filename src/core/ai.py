@@ -1,14 +1,15 @@
 import random
+import time
 import uuid
-from core.constants import ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_TRANSMITTER
-from core.map import Map
+from src.core.constants import ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_TRANSMITTER
+from src.core.map import Map
 
 class AI:
 
-    MAP_WIDTH = 50
-    MAP_HEIGHT = 50
+    MAP_WIDTH = 20
+    MAP_HEIGHT = 20
     BLOCKS_COUNT = 300
-    MAP_UPDATE_ITERATION_COUNT = 250
+    MAP_UPDATE_ITERATION_COUNT = 20
     BLOCK_CREATE_MAX_COUNT = 5
     BLOCK_DELETE_MAX_COUNT = 5
 
@@ -26,14 +27,17 @@ class AI:
         new_map.build_random_map(input_labels, output_labels, self.BLOCKS_COUNT)
         return new_map
 
-    def find_result(self, input):
-        self._map.set_input(input)
+    def find_result(self, input_set):
+        self._map.set_input(input_set)
         
-        for _ in range(self.MAP_UPDATE_ITERATION_COUNT):
-            self._map.update_map_state()
+        for count in range(self.MAP_UPDATE_ITERATION_COUNT):
             
             for monitor in self._monitors:
                 monitor.render_map(self.unique_id, self._map)
+            
+            input()
+            print(count)
+            self._map.update_map_state()
         
         output = self._map.get_output()
         self._map.reset_output()
@@ -51,15 +55,15 @@ class AI:
             random_action = random.choice((True, False))
             
             if random_action:
-                self._map.scatter_random_blocks(ALLOW_CREATE_BLOCK_TYPES, self.MUTATE_BLOCK_CREATE_COUNT)
+                self._map.scatter_random_blocks(ALLOW_CREATE_BLOCK_TYPES, blocks_to_create_count)
             else:
-                self._map.remove_random_blocks(ALLOW_DELETE_BLOCK_TYPES, self.MUTATE_BLOCK_DELETE_COUNT)
+                self._map.remove_random_blocks(ALLOW_DELETE_BLOCK_TYPES, blocks_to_delete_count)
                 
         elif can_add_blocks:
-            self._map.scatter_random_blocks(ALLOW_CREATE_BLOCK_TYPES, self.MUTATE_BLOCK_CREATE_COUNT)
+            self._map.scatter_random_blocks(ALLOW_CREATE_BLOCK_TYPES, blocks_to_create_count)
         
         else:
-            self._map.remove_random_blocks(ALLOW_DELETE_BLOCK_TYPES, self.MUTATE_BLOCK_DELETE_COUNT)
+            self._map.remove_random_blocks(ALLOW_DELETE_BLOCK_TYPES, blocks_to_delete_count)
 
     def get_copy(self):
         return AI(
