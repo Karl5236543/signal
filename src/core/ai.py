@@ -1,5 +1,5 @@
 import random
-from core.constants import ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_TRANSMITTER
+from core.constants import ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_TRANSMITTER
 from core.map import Map
 
 class AI:
@@ -44,15 +44,15 @@ class AI:
             random_action = random.choice((True, False))
             
             if random_action:
-                self._map.scatter_blocks(BLOCK_TYPE_TRANSMITTER, self.MUTATE_BLOCK_CREATE_COUNT)
+                self._map.scatter_random_blocks(ALLOW_CREATE_BLOCK_TYPES, self.MUTATE_BLOCK_CREATE_COUNT)
             else:
-                self._map.remove_rand_blocks(ALLOW_DELETE_BLOCK_TYPES, self.MUTATE_BLOCK_DELETE_COUNT)
+                self._map.remove_random_blocks(ALLOW_DELETE_BLOCK_TYPES, self.MUTATE_BLOCK_DELETE_COUNT)
                 
         elif can_add_blocks:
-            self._map.scatter_blocks(BLOCK_TYPE_TRANSMITTER, self.MUTATE_BLOCK_CREATE_COUNT)
+            self._map.scatter_random_blocks(ALLOW_CREATE_BLOCK_TYPES, self.MUTATE_BLOCK_CREATE_COUNT)
         
         else:
-            self._map.remove_rand_blocks(ALLOW_DELETE_BLOCK_TYPES, self.MUTATE_BLOCK_DELETE_COUNT)
+            self._map.remove_random_blocks(ALLOW_DELETE_BLOCK_TYPES, self.MUTATE_BLOCK_DELETE_COUNT)
 
     def get_copy(self):
         return AI(

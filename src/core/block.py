@@ -1,6 +1,6 @@
 from core.constants import \
     ALLOW_TRANSFER_SIGNAL, BLOCK_STATE_ACTIVATE, BLOCK_STATE_CYCLE, BLOCK_STATE_DEACTIVATE, BLOCK_STATE_FADING, BLOCK_TYPE_INPUT, \
-    BLOCK_TYPE_OUTPUT, BLOCK_TYPE_TRANSMITTER
+    BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER
 
 
 class Block:
@@ -102,10 +102,18 @@ class TransmitterBlock(Block):
     
     def allow_activate(self):
         around_blocks = self._map.get_around_blocks(allow_block_types=ALLOW_TRANSFER_SIGNAL)
-
+        activate = False
+        
         for block in around_blocks:
+            if block.get_type() == BLOCK_TYPE_REGULATOR and block.is_active():
+                return False
+            
             if block.is_active():
-                return True
+                activate = True
+        
+        return activate
+                
+        
             
             
 class InputBlock(TransmitterBlock):
@@ -123,3 +131,8 @@ class OutputBlock(TransmitterBlock):
         return False
     
     
+    
+class RegulatorBlock(TransmitterBlock):
+    
+    def get_type(self):
+        return BLOCK_TYPE_REGULATOR

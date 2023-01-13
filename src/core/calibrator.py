@@ -13,8 +13,6 @@ class Calibrator:
         self.seed_pool = self.init_pool()
         self.seed_result = {}
         
-        
-
     def init_pool(self):
         seed_pool = {}
         for seed in self.yield_copies(self.base_seed, self.SELECTED_COUNT * self.COPY_COUNT):
