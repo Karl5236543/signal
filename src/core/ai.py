@@ -31,6 +31,8 @@ class AI:
             for monitor in self._monitors:
                 monitor.render_map(1, self._map)
             
+            # input()
+
             update_count = self._map.update_map_state()
             if update_count == 0:
                 break

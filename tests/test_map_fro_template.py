@@ -52,7 +52,7 @@ if __name__ == '__main__':
 
     )
 
-
+    goal_res = 0
     gen = 0
     while True:
         res = 0
@@ -65,12 +65,12 @@ if __name__ == '__main__':
 
         if gen % 100 == 0:
             print(f'gen: {gen}\r')
+        
         if res == 4:
-            db.save_bot('best_bot', bot_copy)
-            break
-        else:            
+            goal_res += 1
+            if goal_res == 50:
+                db.save_bot('best_bot', bot_copy)
+        else:
+            goal_res = 0    
             bot_copy.mutate()
             ai = bot_copy
-            
-        ai.mutate()
-        

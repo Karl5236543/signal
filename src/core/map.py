@@ -64,8 +64,6 @@ class Map:
             for index_col, col in enumerate(row):
                 
                 cords = (index_col, index_row)
-                if cords == (5, 2):
-                    print()
                 block_type = block_symbol2type_map.get(col, None)
                 
                 if block_type:
