@@ -12,10 +12,17 @@ block_types2class_map = {
     BLOCK_TYPE_REGULATOR: RegulatorBlock,
 }
 
+block_symbol2type_map = {
+    'I': BLOCK_TYPE_INPUT,
+    'O': BLOCK_TYPE_OUTPUT,
+    '5': BLOCK_TYPE_TRANSMITTER,
+    'L': BLOCK_TYPE_REGULATOR,
+}
+
 
 class Map:
-    
-    def __init__(self, width, height):
+
+    def __init__(self, width, height, input_labels, output_labels):
         self.width = width
         self.height = height
 
@@ -25,6 +32,8 @@ class Map:
         self._empty_cords = set()
         self.input_cords = {}
         self.output_cords = {}
+        self.input_labels = input_labels
+        self.output_labels = output_labels
         
     def get_block_class_by_type(self, block_type):
         return block_types2class_map[block_type]
@@ -44,19 +53,36 @@ class Map:
         self._empty_cords = empty_cords
         self.input_cords = input_cords
         self.output_cords = output_cords
-
-    def build_random_map(self, input_labels, output_labels, blocks_count):
+        
+    def build_map_from_template(self, template):
+        self._init_empty_cords()
+        
+        for index_row, row in enumerate(template):
+            for index_col, col in enumerate(row):
+                
+                cords = (index_col, index_row)
+                if cords == (5, 2):
+                    print()
+                block_type = block_symbol2type_map.get(col, None)
+                
+                if block_type:
+                    if block_type == BLOCK_TYPE_INPUT:
+                        self.add_input(cords, self.input_labels.pop())
+                    elif block_type == BLOCK_TYPE_OUTPUT:
+                        self.add_output(cords, self.output_labels.pop())
+                    else:
+                        self.add_block(cords, block_type)
+                        
+    def build_random_map(self, blocks_count):
         self._init_empty_cords()
 
-        for label in input_labels:
+        for label in self.input_labels:
             cords = self.get_random_empty_cords()
-            self.add_block(cords, BLOCK_TYPE_INPUT)
-            self.input_cords[label] = cords
+            self.add_input(cords, label)
 
-        for label in output_labels:
+        for label in self.output_labels:
             cords = self.get_random_empty_cords()
-            self.add_block(cords, BLOCK_TYPE_OUTPUT)
-            self.output_cords[label] = cords
+            self.add_output(cords, label)
 
         for _ in range(blocks_count):
             block_type = random.choice(ALLOW_CREATE_BLOCK_TYPES)
@@ -124,7 +150,7 @@ class Map:
             field_copy[cords] = block_copy
             block_types_map[block_copy.get_type()][block_copy.get_cords()] = block_copy
              
-        map_copy = Map(self.width, self.height)
+        map_copy = Map(self.width, self.height, self.input_labels, self.output_labels)
 
         return map_copy.build_map(
             field_copy,
@@ -144,6 +170,14 @@ class Map:
             [block_type for block_type in allow_block_types if self._block_types_map[block_type]])
         cords = random.choice(list(self._block_types_map[block_type]))
         return cords
+
+    def add_input(self, cords, label):
+        self.add_block(cords, BLOCK_TYPE_INPUT)
+        self.input_cords[label] = cords
+        
+    def add_output(self, cords, label):
+        self.add_block(cords, BLOCK_TYPE_OUTPUT)
+        self.output_cords[label] = cords
 
     def add_block(self, cords, type=BLOCK_TYPE_TRANSMITTER):
         BlockClass = self.get_block_class_by_type(type)

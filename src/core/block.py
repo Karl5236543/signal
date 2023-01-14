@@ -145,3 +145,12 @@ class RegulatorBlock(TransmitterBlock):
     
     def get_type(self):
         return BLOCK_TYPE_REGULATOR
+    
+    def allow_fading(self):
+        around_blocks = []
+        
+        for block in self._surface.get_around_blocks(self):
+            if block.get_type() not in [BLOCK_TYPE_REGULATOR]:
+                around_blocks.append(block)
+
+        return all(block.is_deactivated() for block in around_blocks)

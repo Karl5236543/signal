@@ -6,25 +6,21 @@ from src.core.map import Map
 
 class AI:
 
-    MAP_WIDTH = 20
-    MAP_HEIGHT = 20
-    BLOCKS_COUNT = 300 
-    MAP_UPDATE_ITERATION_COUNT = 30
+    DEFAULT_MAP_WIDTH = 10
+    DEFAULT_MAP_HEIGHT = 10
+    DEFAULT_BLOCKS_COUNT = 50 
+    MAP_UPDATE_ITERATION_COUNT = 20
     BLOCK_CREATE_MAX_COUNT = 5
     BLOCK_DELETE_MAX_COUNT = 5
 
-    def __init__(self, input_labels, output_labels, map=None):
+    def __init__(self, input_labels=None, output_labels=None, map=None):
         
-        self.unique_id = uuid.uuid4()
-        
-        self.input_labels = input_labels
-        self.output_labels = output_labels
-        self._map = map or self.init_map(self.input_labels, self.output_labels)
+        self._map = map or self.init_map(input_labels, output_labels)
         self._monitors = []
 
     def init_map(self, input_labels, output_labels):
-        new_map = Map(self.MAP_WIDTH, self.MAP_HEIGHT)
-        new_map.build_random_map(input_labels, output_labels, self.BLOCKS_COUNT)
+        new_map = Map(self.DEFAULT_MAP_WIDTH, self.DEFAULT_MAP_HEIGHT, input_labels, output_labels)
+        new_map.build_random_map(self.DEFAULT_BLOCKS_COUNT)
         return new_map
 
     def find_result(self, input_set):
@@ -33,10 +29,10 @@ class AI:
         for count in range(self.MAP_UPDATE_ITERATION_COUNT):
             
             for monitor in self._monitors:
-                monitor.render_map(self.unique_id, self._map)
+                monitor.render_map(1, self._map)
             
-            # input()
-            # print(count)
+            input()
+            print(count)
             self._map.update_map_state()
         
         output = self._map.get_output()
@@ -68,8 +64,8 @@ class AI:
     def get_copy(self):
         ai = AI(
             map=self._map.get_copy(),
-            input_labels=self.input_labels,
-            output_labels=self.output_labels
+            input_labels=self._map.input_labels,
+            output_labels=self._map.output_labels
         )
         ai.set_monitors(self._monitors)
         return ai

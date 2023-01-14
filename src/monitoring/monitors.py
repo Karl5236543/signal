@@ -5,10 +5,6 @@ from src.core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_R
 from src.monitoring.constants import BLOCK_HEIGHT, BLOCK_WIDTH, COLOR_BLACK
 import time
 
-pygame.init()
-FramePerSec = pygame.time.Clock()
-pygame.display.set_caption("Example")
-
 class ConsoleMonitor:
     pass
 
@@ -16,8 +12,12 @@ class ConsoleMonitor:
 class GUIMonitor:
     
     def __init__(self, bot_count):
+        pygame.init()
+        FramePerSec = pygame.time.Clock()
+        pygame.display.set_caption("Example")
+        
         self.surface = pygame.display.set_mode(
-            (AI.MAP_WIDTH * bot_count * BLOCK_WIDTH, AI.MAP_HEIGHT * bot_count * BLOCK_HEIGHT))
+            (AI.DEFAULT_MAP_WIDTH * bot_count * BLOCK_WIDTH, AI.DEFAULT_MAP_HEIGHT * bot_count * BLOCK_HEIGHT))
         self.surface.fill(COLOR_BLACK)
     
     def render_map(self, uuid, map_state):
