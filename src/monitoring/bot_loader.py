@@ -10,6 +10,7 @@ class BotDB:
         return os.path.join(BOT_DUMPS_PATH, f'{label}.pickle')
     
     def save_bot(self, label, bot):
+        bot.remove_monitors()
         file_path = self.make_file_path(label)
         
         with open(file_path, 'wb') as file:

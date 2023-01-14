@@ -2,9 +2,9 @@
 
 class Calibrator:
 
-    SELECTED_COUNT = 3
+    SELECTED_COUNT = 2
     COPY_COUNT = 5
-    POOL_SIZE = SELECTED_COUNT * COPY_COUNT
+    POOL_SIZE = SELECTED_COUNT * (COPY_COUNT + SELECTED_COUNT)
 
     def __init__(self, seed, driver, goal_score):
         self.id_counter = 0
@@ -21,7 +21,7 @@ class Calibrator:
         for seed in seeds:
             self.bot_pool[self.generate_id()] = seed
 
-            for seed_copy in self.yield_copies(seed, self.COPY_COUNT - 1):
+            for seed_copy in self.yield_copies(seed, self.COPY_COUNT):
                 seed_copy.mutate()
                 self.bot_pool[self.generate_id()] = seed_copy
     
@@ -54,7 +54,7 @@ class Calibrator:
     def run(self):
         generation = 0
         test_results = {}
-
+        goal_achieved_counter = 0
         self.init_pool()
         
         while True:
@@ -74,9 +74,7 @@ class Calibrator:
             yield generation, [(pool_copies[id], test_results[id]) for bot in best_bot_ids]
             
             test_results.clear()
-            if self.is_goal_achieved(test_results):
-                break
-            
+
 
     def generate_id(self):
         id = self.id_counter

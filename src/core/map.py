@@ -1,8 +1,9 @@
 
 
 import random
-from src.core.constants import ALL_BLOCK_TYPES, ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER
-from src.core.block import InputBlock, OutputBlock, TransmitterBlock, RegulatorBlock
+from src.core.constants import ALL_BLOCK_TYPES, ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, \
+    BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER, BLOCK_TYPE_TRIGGER
+from src.core.block import InputBlock, OutputBlock, TransmitterBlock, RegulatorBlock, TriggerBlock
 
 
 block_types2class_map = {
@@ -10,6 +11,7 @@ block_types2class_map = {
     BLOCK_TYPE_OUTPUT: OutputBlock,
     BLOCK_TYPE_TRANSMITTER: TransmitterBlock,
     BLOCK_TYPE_REGULATOR: RegulatorBlock,
+    BLOCK_TYPE_TRIGGER: TriggerBlock,
 }
 
 block_symbol2type_map = {
@@ -17,6 +19,7 @@ block_symbol2type_map = {
     'O': BLOCK_TYPE_OUTPUT,
     '5': BLOCK_TYPE_TRANSMITTER,
     'L': BLOCK_TYPE_REGULATOR,
+    'T': BLOCK_TYPE_TRIGGER,
 }
 
 
@@ -110,17 +113,26 @@ class Map:
                     block.deactivate()
                 block.push_new_state()
 
-    def get_around_blocks(self, block):
-        return [self.get_block(cords) for cords in 
-                self.extract_existed_cords(block.get_around_cords()) if self.is_block_here(cords)]
+    def get_around_blocks(self, block, ignore_blocks):
+        arownd_blocks = [
+            self.get_block(cords) for cords in 
+            self.extract_existed_cords(block.get_around_cords())
+            if self.is_block_here(cords)
+        ]
+
+        return [block for block in arownd_blocks if block.get_type() not in ignore_blocks]
 
     def update_map_state(self):
         for _, block in self._field.items():
             block.update_state()
         
+        block_update_count = 0
         for _, block in self._field.items():
-            block.push_new_state()
+            updated = block.push_new_state()
+            if updated:
+                block_update_count += 1
         
+        return block_update_count
 
     def extract_existed_cords(self, cords_scope):
         return [(x, y) for (x, y) in cords_scope if x < self.width and y < self.height]
@@ -145,20 +157,23 @@ class Map:
         field_copy = {}
         block_types_map = {block_type: {} for block_type in ALL_BLOCK_TYPES}
         
+        map_copy = Map(self.width, self.height, self.input_labels, self.output_labels)
+        
         for cords, block in self._field.items():
-            block_copy = block.get_copy()
+            block_copy = block.get_copy(surface=map_copy)
             field_copy[cords] = block_copy
             block_types_map[block_copy.get_type()][block_copy.get_cords()] = block_copy
              
-        map_copy = Map(self.width, self.height, self.input_labels, self.output_labels)
 
-        return map_copy.build_map(
+        map_copy.build_map(
             field_copy,
             block_types_map,
             self._empty_cords.copy(),
             self.input_cords.copy(),
             self.output_cords.copy()
         )
+
+        return map_copy
         
     def get_random_empty_cords(self):
         cords = self._empty_cords.pop()

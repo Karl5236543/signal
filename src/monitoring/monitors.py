@@ -1,7 +1,8 @@
 import pygame
 from pygame.locals import *
 from src.core.ai import AI
-from src.core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER
+from src.core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, \
+    BLOCK_TYPE_TRANSMITTER, BLOCK_TYPE_TRIGGER
 from src.monitoring.constants import BLOCK_HEIGHT, BLOCK_WIDTH, COLOR_BLACK
 import time
 
@@ -60,3 +61,9 @@ class GUIMonitor:
                 return (255, 0, 0)
             else:
                 return (0, 255, 26)
+
+        elif block.get_type() == BLOCK_TYPE_TRIGGER:
+            if block.is_active():
+                return (219, 142, 48)
+            else:
+                return (59, 38, 12)

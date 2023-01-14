@@ -1,3 +1,4 @@
+import random
 
 
 class DriverTest():
@@ -6,7 +7,7 @@ class DriverTest():
         self.score = 0
         self.current_input = None
 
-    data = (
+    data = [
         {
             'input': {'a': 0, 'b': 0}, 
             'output': {'y': 0}
@@ -23,9 +24,10 @@ class DriverTest():
             'input': {'a': 1, 'b': 1}, 
             'output': {'y': 0}
         },
-    )
+    ]
 
     def yield_input(self):
+        random.shuffle(self.data)
         for item in self.data:
             self.current_item = item
             yield item['input']

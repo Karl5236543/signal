@@ -13,9 +13,9 @@ class AI:
     BLOCK_CREATE_MAX_COUNT = 5
     BLOCK_DELETE_MAX_COUNT = 5
 
-    def __init__(self, input_labels=None, output_labels=None, map=None):
+    def __init__(self, input_labels=None, output_labels=None, surface=None):
         
-        self._map = map or self.init_map(input_labels, output_labels)
+        self._map = surface or self.init_map(input_labels, output_labels)
         self._monitors = []
 
     def init_map(self, input_labels, output_labels):
@@ -31,18 +31,18 @@ class AI:
             for monitor in self._monitors:
                 monitor.render_map(1, self._map)
             
-            input()
-            print(count)
-            self._map.update_map_state()
-        
+            update_count = self._map.update_map_state()
+            if update_count == 0:
+                break
+
         output = self._map.get_output()
         self._map.reset_output()
         return output
 
     def mutate(self):
         
-        blocks_to_create_count = random.randint(0, self.BLOCK_CREATE_MAX_COUNT)
-        blocks_to_delete_count = random.randint(0, self.BLOCK_DELETE_MAX_COUNT)
+        blocks_to_create_count = random.randint(1, self.BLOCK_CREATE_MAX_COUNT)
+        blocks_to_delete_count = random.randint(1, self.BLOCK_DELETE_MAX_COUNT)
         
         can_add_blocks = self._map.can_add_blocks(blocks_to_create_count)
         can_delete_blocks = self._map.can_delete_blocks(blocks_to_delete_count)
@@ -63,12 +63,15 @@ class AI:
 
     def get_copy(self):
         ai = AI(
-            map=self._map.get_copy(),
             input_labels=self._map.input_labels,
-            output_labels=self._map.output_labels
+            output_labels=self._map.output_labels,
+            surface=self._map.get_copy(),
         )
         ai.set_monitors(self._monitors)
         return ai
         
     def set_monitors(self, monitors):
         self._monitors = monitors
+
+    def remove_monitors(self):
+        self._monitors.clear()
