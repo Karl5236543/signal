@@ -65,14 +65,19 @@ class Calibrator:
             for id, bot in self.bot_pool.items():
                 score = self.run_test(bot)
                 test_results[id] = score
-
+                
+            if self.is_goal_achieved(test_results):
+                goal_achieved_counter += 1
+                
+                if goal_achieved_counter > 100:
+                    pass                    
+            # else:
+            #     goal_achieved_counter = 0
+            
             best_bot_ids = self.get_best_bots(test_results)
             best_bots_copies = [pool_copies[id] for id in best_bot_ids]
 
             self.rebuild_bot_pool(best_bots_copies)
-            
-            yield generation, [(pool_copies[id], test_results[id]) for bot in best_bot_ids]
-            
             test_results.clear()
 
 

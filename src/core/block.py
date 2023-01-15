@@ -159,7 +159,7 @@ class RegulatorBlock(TransmitterBlock):
         return BLOCK_TYPE_REGULATOR
     
     def allow_fading(self, around_blocks, is_blocked):
-        return all(block.is_deactivated() for block in around_blocks)
+        return all(not block.is_active() for block in around_blocks)
 
 
 class TriggerBlock(Block):
@@ -184,3 +184,10 @@ class TriggerBlock(Block):
         
         return False
 
+
+class TriggerBlockLocked(TriggerBlock):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, state=BLOCK_STATE_ACTIVATE, **kwargs)
+        self.can_fading = True
+        

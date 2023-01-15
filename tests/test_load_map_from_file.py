@@ -5,6 +5,8 @@ from src.monitoring.monitors import ConsoleMonitor, GUIMonitor
 from src.core.ai import AI
 from src.core.calibrator import Calibrator
 from src.drivers.test_driver import DriverTest
+import random
+
 
 if __name__ == '__main__':
 
@@ -32,6 +34,7 @@ if __name__ == '__main__':
         },
     ]
 
+    random.shuffle(input_set)
     for data_set in input_set:
         output = ai.find_result(data_set['input'])
         print(f'intupt: {data_set["input"]} output: {output}')

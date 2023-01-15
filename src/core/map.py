@@ -2,8 +2,9 @@
 
 import random
 from src.core.constants import ALL_BLOCK_TYPES, ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, \
-    BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER, BLOCK_TYPE_TRIGGER
-from src.core.block import InputBlock, OutputBlock, TransmitterBlock, RegulatorBlock, TriggerBlock
+    BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER, BLOCK_TYPE_TRIGGER, \
+    BLOCK_TYPE_TRIGGER_LOCKED
+from src.core.block import InputBlock, OutputBlock, TransmitterBlock, RegulatorBlock, TriggerBlock, TriggerBlockLocked
 
 
 block_types2class_map = {
@@ -12,6 +13,7 @@ block_types2class_map = {
     BLOCK_TYPE_TRANSMITTER: TransmitterBlock,
     BLOCK_TYPE_REGULATOR: RegulatorBlock,
     BLOCK_TYPE_TRIGGER: TriggerBlock,
+    BLOCK_TYPE_TRIGGER_LOCKED: TriggerBlockLocked
 }
 
 block_symbol2type_map = {
@@ -19,6 +21,7 @@ block_symbol2type_map = {
     'O': BLOCK_TYPE_OUTPUT,
     '5': BLOCK_TYPE_TRANSMITTER,
     'L': BLOCK_TYPE_REGULATOR,
+    't': BLOCK_TYPE_TRIGGER_LOCKED,
     'T': BLOCK_TYPE_TRIGGER,
 }
 

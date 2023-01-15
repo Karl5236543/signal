@@ -17,12 +17,5 @@ if __name__ == '__main__':
 
     calibrator = Calibrator(ai, driver, goal_score)
 
-
-    best_res = None
-    for generation, results in calibrator.run():
-        best_res = results
-        if generation % 100 == 0:
-            print(f'gen: {generation}\t {results}')
-    
-    for bot, score in results:
-        db.save_bot(f'best_bot_{score}', bot)
+    bot = calibrator.run()
+    db.save_bot(f'best_bot', bot)
