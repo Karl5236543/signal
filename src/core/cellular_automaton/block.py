@@ -125,7 +125,7 @@ class Block:
         self._cords[1] = y
         
     def get_copy(self, surface):
-        return self.__class__(self._cords, surface, self._state, self._new_state)
+        return self.__class__(self._cords, surface, state=self._state, new_state=self._new_state)
     
         
 class TransmitterBlock(Block):
@@ -187,7 +187,8 @@ class TriggerBlock(Block):
 
 class TriggerBlockLocked(TriggerBlock):
     
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, state=BLOCK_STATE_ACTIVATE, **kwargs)
+    def __init__(self, *args, state=None, **kwargs):
+        state = state or BLOCK_STATE_ACTIVATE
+        super().__init__(*args, state=state, **kwargs)
         self.can_fading = True
         

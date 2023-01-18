@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import *
-from src.core.ai import AI
+from src.core.individual import Individual
 from src.core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, \
     BLOCK_TYPE_TRANSMITTER, BLOCK_TYPE_TRIGGER
 from src.monitoring.constants import BLOCK_HEIGHT, BLOCK_WIDTH, COLOR_BLACK
@@ -18,7 +18,7 @@ class GUIMonitor:
         pygame.display.set_caption("Example")
         
         self.surface = pygame.display.set_mode(
-            (AI.DEFAULT_MAP_WIDTH * bot_count * BLOCK_WIDTH, AI.DEFAULT_MAP_HEIGHT * bot_count * BLOCK_HEIGHT))
+            (Individual.DEFAULT_MAP_WIDTH * bot_count * BLOCK_WIDTH, Individual.DEFAULT_MAP_HEIGHT * bot_count * BLOCK_HEIGHT))
         self.surface.fill(COLOR_BLACK)
     
     def render_map(self, uuid, map_state):
