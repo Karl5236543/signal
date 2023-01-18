@@ -1,50 +1,56 @@
 
 
+import random
 from src.core.individual import Individual
 from src.monitoring.bot_loader import BotDB
-from deap import tools
+from deap.tools import selTournament
 
-tools.selTournament
-tools.cxOnePoint
+
+class Population(list):
+    
+    TOURN_SIZE = 3
+    P_CROSSOVER = 0.9
+    P_MUTATION = 0.1
+    
+    
+
 
 class Calibrator:
 
     POOL_SIZE = 100
+    TOURN_SIZE = 3
+    
+    P_CROSSOVER = 0.9
+    P_MUTATION = 0.1
 
     def __init__(self, input_labels, output_labels, driver, goal_score):
-        self.id_counter = 0
-        self.driver = driver
         self.population = []
         self._monitors = []
+        self.driver = driver
         self.goal_score = goal_score
-        self.db = BotDB()
-        
         self.input_labels = input_labels 
         self.output_labels = output_labels
     
     def rebuild_population(self):
-        
-        
-        # TODO:
-        
-        # отбор
-        # selTournament
-        
-        # скрещивание
-        # cxOnePoint
-        
-        # создание новой популяции
-        
-        # deprecated
-        # self.population.clear()
-        # self.id_counter = 0
+        offspring = selTournament(self.population, self.POOL_SIZE, self.TOURN_SIZE)
+        self.crossover(offspring)
 
-        # for seed in seeds:
-        #     self.population[f'{self.generate_id()}_main'] = seed
-
-        #     for seed_copy in self.yield_copies(seed, self.COPY_COUNT):
-        #         seed_copy.mutate()
-        #         self.population[f'{self.generate_id()}_copy'] = seed_copy
+        self.population = self.get_population_copy(offspring)
+        self.mutate_population()
+    
+    def crossover(self, offspring):
+        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+            if random.random() < self.P_CROSSOVER:
+                self.cx_one_point(child1, child2)
+                
+    def cx_one_point(self, child1, child2):
+        s = random.randint(2, len(child1)-3)
+        child1.genome[s:], child2.genome[s:] = child2.genome[s:], child1.genome[s:]
+        
+    def mutate_population(self):
+        for individual in self.population:
+            if random.random() < self.P_MUTATION:
+                individual.mutate()
     
     def init_population(self):
         self.population = [Individual(self.input_labels, self.output_labels) for _ in range(self.POOL_SIZE)]
