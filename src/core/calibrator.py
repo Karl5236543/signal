@@ -1,28 +1,38 @@
 
 
+from src.core.individual import Individual
 from src.monitoring.bot_loader import BotDB
+from deap import tools
 
+tools.selTournament
+tools.cxOnePoint
 
 class Calibrator:
 
-    SELECTED_COUNT = 1
-    COPY_COUNT = 9
-    POOL_SIZE = SELECTED_COUNT * (COPY_COUNT + 1)
+    POOL_SIZE = 100
 
-    def __init__(self, seed, driver, goal_score):
+    def __init__(self, input_labels, output_labels, driver, goal_score):
         self.id_counter = 0
         self.driver = driver
-        self.base_seed = seed
-        self.population = {}
+        self.population = []
         self._monitors = []
         self.goal_score = goal_score
         self.db = BotDB()
+        
+        self.input_labels = input_labels 
+        self.output_labels = output_labels
     
-    def rebuild_population(self, seeds):
-        pass
+    def rebuild_population(self):
+        
+        
         # TODO:
+        
         # отбор
+        # selTournament
+        
         # скрещивание
+        # cxOnePoint
+        
         # создание новой популяции
         
         # deprecated
@@ -36,53 +46,31 @@ class Calibrator:
         #         seed_copy.mutate()
         #         self.population[f'{self.generate_id()}_copy'] = seed_copy
     
-    def init_pool(self):
-        pass
-        # TODO:
-        # рандомно генерировать начальную популяцию (без использования сида)
-        
-        # deprecated
-        # self.population[f'{self.generate_id()}_main'] = self.base_seed
-        
-        # for bot in self.yield_copies(self.base_seed, self.POOL_SIZE - 1):
-        #     self.population[f'{self.generate_id()}_copy'] = bot
-
-    def yield_copies(self, bot, count):
-        for _ in range(count):
-            yield bot.get_copy()
+    def init_population(self):
+        self.population = [Individual(self.input_labels, self.output_labels) for _ in range(self.POOL_SIZE)]
 
     def run_test(self, bot):
         for input in self.driver.yield_input():
             output = bot.find_result(input)
             self.driver.send_output(output)
+
         return self.driver.read_result()
     
-    def get_best_bots(self, test_results):
-        best_records = sorted(
-            test_results.items(),
-            key=lambda record: record[1],
-            reverse=True
-        )[:self.SELECTED_COUNT]
-
-        return [record[0] for record in best_records]
-    
     def is_goal_achieved(self, population):
-        return any(result >= self.fitness for result in population.values())
+        return any(individual.fitness >= self.goal_score for individual in population)
     
     def test_population(self, population):
-        for id, individual in self.population.items():
+        for individual in population:
             score = self.run_test(individual)
             individual.set_fitness(score)
-
-                
     
     def get_population_copy(self, population):
-        return {id: individual.get_copy() for (id, individual) in self.population.items()}
+        return [individual.get_copy() for individual in self.population]
     
     def run(self):
         generation = 0
         
-        self.init_pool()
+        self.init_population()
         current_population_copy = self.get_population_copy(self.population)
         
         while True:
@@ -115,14 +103,12 @@ class Calibrator:
                 
             else:
                 self.rebuild_population()
-                
-                
 
             generation += 1
 
     def get_best_individuals(self):
-        best_fitness = max(self.population.values(), key=lambda indiv: indiv.fitness).fitness
-        return [individual for individual in self.population.values() if individual.fitness == best_fitness]
+        best_fitness = max(self.population, key=lambda indiv: indiv.fitness).fitness
+        return [individual for individual in self.population if individual.fitness == best_fitness]
 
     def generate_id(self):
         id = self.id_counter
