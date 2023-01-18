@@ -18,7 +18,7 @@ class Calibrator:
         self.goal_score = goal_score
         self.db = BotDB()
     
-    def rebuild_bot_pool(self, seeds):
+    def rebuild_population(self, seeds):
         pass
         # TODO:
         # отбор
@@ -37,6 +37,7 @@ class Calibrator:
         #         self.population[f'{self.generate_id()}_copy'] = seed_copy
     
     def init_pool(self):
+        pass
         # TODO:
         # рандомно генерировать начальную популяцию (без использования сида)
         
@@ -65,49 +66,63 @@ class Calibrator:
 
         return [record[0] for record in best_records]
     
-    def is_goal_achieved(self, test_results):
-        return any(result >= self.goal_score for result in test_results.values())
+    def is_goal_achieved(self, population):
+        return any(result >= self.fitness for result in population.values())
+    
+    def test_population(self, population):
+        for id, individual in self.population.items():
+            score = self.run_test(individual)
+            individual.set_fitness(score)
+
+                
+    
+    def get_population_copy(self, population):
+        return {id: individual.get_copy() for (id, individual) in self.population.items()}
     
     def run(self):
         generation = 0
-        test_results = {}
-        goal_achieved_counter = 0
+        
         self.init_pool()
+        current_population_copy = self.get_population_copy(self.population)
         
         while True:
+            self.test_population(current_population_copy)
             
-            population_copy = {id: individual.get_copy() for (id, individual) in self.population.items()}
+            for copy, individual in zip(current_population_copy, self.population):
+                individual.fitness = copy.fitness
             
-            for id, bot in self.population.items():
-                score = self.run_test(bot)
-                bot.set_fitness(score)
+            if self.is_goal_achieved(self.population):
                 
-                # test_results[id] = score
+                best_individuals = self.get_best_individuals()
                 
-                # if generation % 1000 == 0:
-                #     print(f'gen_{generation}_res_{score}_{id}')
-                # #     self.db.save_bot(f'gen_{generation}_res_{score}_{id}', bot)
-                
-            # best_bot_ids = self.get_best_bots(test_results)
-            # best_bots_copies = [population_copy[id] for id in best_bot_ids]
-            
-            if self.is_goal_achieved(test_results):
-                goal_achieved_counter += 1
-                
-                if goal_achieved_counter > 100:
-                    return self.get_best_individual()
-                
-                self.population = best_bots_copies
+                for individual in best_individuals:
+                    goal_achieved_counter = 0
+                    
+                    while True:
+                        individual_copy = individual.get_copy()
+                        
+                        self.test_population([individual_copy])
+                        
+                        if self.is_goal_achieved([individual_copy]):
+                            goal_achieved_counter += 1
+
+                            if goal_achieved_counter == 50:
+                                individual.fitness = individual_copy.fitness
+                                return individual
+                            
+                        else:
+                            break
                 
             else:
-                goal_achieved_counter = 0
-                self.rebuild_bot_pool(best_bots_copies)
+                self.rebuild_population()
+                
+                
 
-            test_results.clear()
             generation += 1
 
-    def get_best_individual(self):
-        return max(self.population.values(), key=lambda indiv: indiv.fitness)
+    def get_best_individuals(self):
+        best_fitness = max(self.population.values(), key=lambda indiv: indiv.fitness).fitness
+        return [individual for individual in self.population.values() if individual.fitness == best_fitness]
 
     def generate_id(self):
         id = self.id_counter
