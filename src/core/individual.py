@@ -14,12 +14,15 @@ class Individual:
     BLOCK_DELETE_MAX_COUNT = 5
     
     def __init__(self, input_labels=None, output_labels=None, genome=None):
-        self._genome = genome or self.init_genome(input_labels, output_labels)
-        self._fitness = None
+        self.input_labels = input_labels
+        self.output_labels = output_labels
+        self.fitness = None
+        
+        self.genome = genome or self.init_genome(input_labels, output_labels)
         self._monitors = []
 
     def init_genome(self, input_labels, output_labels):
-        genome = {
+        genome = [
             Map(
                 self.DEFAULT_MAP_WIDTH,
                 self.DEFAULT_MAP_HEIGHT,
@@ -28,7 +31,7 @@ class Individual:
                 main_output_label=output_label
             )
             for output_label in output_labels
-        }
+        ]
         
         for gen in genome:
             gen.build_random_map(self.DEFAULT_BLOCKS_COUNT)
@@ -38,29 +41,30 @@ class Individual:
     def find_result(self, input_set):
         self.__set_input(input_set)
         
-        for count in range(self.MAP_UPDATE_ITERATION_COUNT):
-            
-            for monitor in self._monitors:
-                monitor.render_map(1, self._genome)
-            
-            # input()
+        for gen in self.genome:
+            for count in range(self.MAP_UPDATE_ITERATION_COUNT):
+                
+                # for monitor in self._monitors:
+                #     monitor.render_map(1, self.gen)
+                
+                # input()
 
-            update_count = self._genome.update_map_state()
-            if update_count == 0:
-                break
+                update_count = gen.update_map_state()
+                if update_count == 0:
+                    break
 
         output = self.__build_genome_output()
         self.__reset_output()
         return output
     
     def __build_genome_output(self):
-        return {gen.main_output_label: gen.get_main_output() for gen in self._genome}
+        return {gen.main_output_label: gen.get_main_output() for gen in self.genome}
 
     def mutate(self):
         # TODO:
         # можно создавать новые на замену случайному гену с некоторой вероятностью
         
-        gen = random.choice(self._genome)
+        gen = random.choice(self.genome)
         
         blocks_to_create_count = random.randint(1, self.BLOCK_CREATE_MAX_COUNT)
         blocks_to_delete_count = random.randint(1, self.BLOCK_DELETE_MAX_COUNT)
@@ -84,12 +88,15 @@ class Individual:
 
     def get_copy(self):
         individual_copy = Individual(
-            input_labels=self._genome.input_labels,
-            output_labels=self._genome.output_labels,
-            genome=self._genome.get_copy(),
+            input_labels=self.input_labels,
+            output_labels=self.output_labels,
+            genome=self.get_genome_copy(),
         )
         individual_copy.set_monitors(self._monitors)
         return individual_copy
+    
+    def get_genome_copy(self):
+        return [gen.get_copy() for gen in self.genome]
         
     def set_monitors(self, monitors):
         self._monitors = monitors
@@ -98,12 +105,12 @@ class Individual:
         self._monitors.clear()
         
     def set_fitness(self, fitness):
-        self._fitness = fitness
+        self.fitness = fitness
         
     def __set_input(self, input_set):
-        for gen in self._genome:
+        for gen in self.genome:
             gen.set_input(input_set)
             
     def __reset_output(self):
-        for gen in self._genome:
+        for gen in self.genome:
             gen.reset_output()

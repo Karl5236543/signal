@@ -15,15 +15,15 @@ class Calibrator:
     def run(self):
         generation = 0
         
-        self.population.init_random()
+        self.population.init_random(self.POOL_SIZE)
         current_population_copy = self.population.get_copy()
         
         while True:
             
             self.test_population(self.population)
             
-            for copy, individual in zip(current_population_copy, self.population):
-                individual.fitness = copy.fitness
+            # for copy, individual in zip(current_population_copy, self.population):
+            #     individual.fitness = copy.fitness
             
             if self.is_goal_achieved(self.population):
                 
@@ -41,7 +41,6 @@ class Calibrator:
                             goal_achieved_counter += 1
 
                             if goal_achieved_counter == 50:
-                                individual.fitness = individual_copy.fitness
                                 return individual
                             
                         else:

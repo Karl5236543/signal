@@ -9,7 +9,7 @@ from src.core.cellular_automaton.map import Map
 if __name__ == '__main__':
 
     input_labels = ['a', 'b']
-    output_labels = ['y1']
+    output_labels = ['y1', 'y2', 'y3', 'y4']
     driver = DriverTest()
     goal_score = 4
     db = BotDB()

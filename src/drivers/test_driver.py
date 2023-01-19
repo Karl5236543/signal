@@ -10,19 +10,19 @@ class DriverTest():
     data = [
         {
             'input': {'a': 0, 'b': 0}, 
-            'output': {'y1': 0}
+            'output': {'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0}
         },
         {
             'input': {'a': 0, 'b': 1}, 
-            'output': {'y1': 1}
+            'output': {'y1': 1, 'y2': 0, 'y3': 0, 'y4': 0}
         },
         {
             'input': {'a': 1, 'b': 0}, 
-            'output': {'y1': 1}
+            'output': {'y1': 1, 'y2': 0, 'y3': 0, 'y4': 0}
         },
         {
             'input': {'a': 1, 'b': 1}, 
-            'output': {'y1': 0}
+            'output': {'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0}
         },
     ]
 

@@ -4,7 +4,8 @@ import random
 from src.core.constants import ALL_BLOCK_TYPES, ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, \
     BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER, BLOCK_TYPE_TRIGGER, \
     BLOCK_TYPE_TRIGGER_LOCKED
-from core.cellular_automaton.block import InputBlock, OutputBlock, TransmitterBlock, RegulatorBlock, TriggerBlock, TriggerBlockLocked
+from src.core.cellular_automaton.block import \
+    InputBlock, OutputBlock, TransmitterBlock, RegulatorBlock, TriggerBlock, TriggerBlockLocked
 
 
 block_types2class_map = {
@@ -167,7 +168,7 @@ class Map:
         field_copy = {}
         block_types_map = {block_type: {} for block_type in ALL_BLOCK_TYPES}
         
-        map_copy = Map(self.width, self.height, self.input_labels, self.output_labels, self.main_output)
+        map_copy = Map(self.width, self.height, self.input_labels, self.output_labels, self.main_output_label)
         
         for cords, block in self._field.items():
             block_copy = block.get_copy(surface=map_copy)
