@@ -10,6 +10,10 @@ class Population(list):
     TOURN_SIZE = 3
     P_CROSSOVER = 0.9
     P_MUTATION = 0.1
+
+    def __init__(self, input_labels, output_labels, *args, **kwargs):
+        self.input_labels = input_labels
+        self.output_labels = output_labels
     
     def rebuild(self):
         offspring = selTournament(self, len(self), self.TOURN_SIZE)

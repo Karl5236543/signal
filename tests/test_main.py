@@ -13,12 +13,8 @@ if __name__ == '__main__':
     driver = DriverTest()
     goal_score = 4
     db = BotDB()
-    ai = Individual(input_labels, output_labels)
-    # ai = db.load_bot('gen_53000_res_0_0_main')
 
-    calibrator = Calibrator(ai, driver, goal_score)
+    calibrator = Calibrator(input_labels, output_labels, driver, goal_score)
 
-    bots = calibrator.run()
-    for index, bot in enumerate(bots):
-        db.save_bot(f'bets_bot_{index}', bot)
-    # db.save_bot(f'best_bot', bot)
+    bot = calibrator.run()
+    db.save_bot(f'best_bot', bot)

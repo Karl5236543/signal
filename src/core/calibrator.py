@@ -6,12 +6,11 @@ class Calibrator:
     POOL_SIZE = 100
 
     def __init__(self, input_labels, output_labels, driver, goal_score):
-        self.population = Population()
+        self.population = Population(input_labels=input_labels, output_labels=output_labels)
+        self.goal_score = goal_score
+        
         self._monitors = []
         self.driver = driver
-        self.goal_score = goal_score
-        self.input_labels = input_labels 
-        self.output_labels = output_labels
 
     def run(self):
         generation = 0
@@ -20,6 +19,9 @@ class Calibrator:
         current_population_copy = self.population.get_copy()
         
         while True:
+            
+            self.test_population(self.population)
+            
             for copy, individual in zip(current_population_copy, self.population):
                 individual.fitness = copy.fitness
             
