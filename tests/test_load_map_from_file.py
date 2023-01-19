@@ -10,27 +10,27 @@ import random
 
 if __name__ == '__main__':
 
-    monitor = GUIMonitor(1)
+    monitor = GUIMonitor(4)
     db = BotDB()
-    ai = db.load_bot('bes_bot')
+    ai = db.load_bot('best_bot')
     ai.set_monitors([monitor])
 
     data = [
         {
             'input': {'a': 0, 'b': 0}, 
-            'output': {'y1': 0}
+            'output': {'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0}
         },
         {
             'input': {'a': 0, 'b': 1}, 
-            'output': {'y1': 1}
+            'output': {'y1': 1, 'y2': 0, 'y3': 0, 'y4': 0}
         },
         {
             'input': {'a': 1, 'b': 0}, 
-            'output': {'y1': 1}
+            'output': {'y1': 1, 'y2': 0, 'y3': 0, 'y4': 0}
         },
         {
             'input': {'a': 1, 'b': 1}, 
-            'output': {'y1': 0}
+            'output': {'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0}
         },
     ]
 

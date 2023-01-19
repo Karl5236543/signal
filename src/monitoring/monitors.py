@@ -5,6 +5,30 @@ from src.core.constants import BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_R
     BLOCK_TYPE_TRANSMITTER, BLOCK_TYPE_TRIGGER
 from src.monitoring.constants import BLOCK_HEIGHT, BLOCK_WIDTH, COLOR_BLACK
 import time
+import matplotlib.pyplot as plt
+
+
+class GraphMonitor:
+    # def __init__(self) -> None:
+    #     pass
+        # plt.ion()
+        # self.fig, self.ax = plt.subplots()
+        # self.line, = self.ax.plot(' o', markersize=1)
+        
+
+    def show_fitness(self, population):
+        data = [indiv.fitness for indiv in population]
+        print(data)
+
+        # self.ax.set_ylim(0, 6)
+
+        # plt.plot(data, [i for i in range(len(data))])
+
+        # plt.draw()
+        # plt.gcf().canvas.flush_events()
+
+        # plt.ioff()
+        # plt.show()
 
 class ConsoleMonitor:
     pass
@@ -13,6 +37,7 @@ class ConsoleMonitor:
 class GUIMonitor:
     
     def __init__(self, bot_count):
+        self.bot_count = bot_count
         pygame.init()
         FramePerSec = pygame.time.Clock()
         pygame.display.set_caption("Example")
@@ -23,7 +48,6 @@ class GUIMonitor:
     
     def render_map(self, uuid, map_state):
         self.surface.fill(COLOR_BLACK)
-        
         for cords, block in map_state.get_map_state().items():
             pygame.draw.rect(
                 self.surface,
@@ -33,7 +57,8 @@ class GUIMonitor:
         pygame.display.update()
             
     def convert_cords(self, uuid, cords):
-        return cords[0] * BLOCK_WIDTH, cords[1] * BLOCK_HEIGHT
+        x_offset = uuid * Individual.DEFAULT_MAP_WIDTH * BLOCK_WIDTH
+        return (cords[0] * BLOCK_WIDTH) + x_offset, cords[1] * BLOCK_HEIGHT
     
     def _convert_color(self, block):
         if block.get_type() == BLOCK_TYPE_INPUT:

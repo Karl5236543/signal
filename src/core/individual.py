@@ -41,11 +41,11 @@ class Individual:
     def find_result(self, input_set):
         self.__set_input(input_set)
         
-        for gen in self.genome:
-            for count in range(self.MAP_UPDATE_ITERATION_COUNT):
+        for index, gen in enumerate(self.genome):
+            for _ in range(self.MAP_UPDATE_ITERATION_COUNT):
                 
-                # for monitor in self._monitors:
-                #     monitor.render_map(1, self.gen)
+                for monitor in self._monitors:
+                    monitor.render_map(index, gen)
                 
                 # input()
 

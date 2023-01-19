@@ -187,8 +187,8 @@ class Map:
         return map_copy
         
     def __get_random_empty_cords(self):
-        cords = self._empty_cords.pop()
-        self._empty_cords.add(cords)
+        empty_cords = list(self._empty_cords)
+        cords = random.choice(empty_cords)
         return cords
 
     def __get_random_no_empty_cords(self, allow_block_types):

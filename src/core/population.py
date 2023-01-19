@@ -17,7 +17,12 @@ class Population(list):
         super().__init__(*args, **kwargs)
     
     def rebuild(self):
-        offspring = Population(selTournament(self, len(self), self.TOURN_SIZE))
+        offspring = Population(
+            self.input_labels,
+            self.output_labels,
+            selTournament(self, len(self), self.TOURN_SIZE)
+        )
+        
         offspring.crossover()
 
         self.population = offspring.get_copy()
@@ -27,7 +32,7 @@ class Population(list):
         self.extend([Individual(self.input_labels, self.output_labels) for _ in range(size)])
     
     def crossover(self):
-        for child1, child2 in zip(offspring[::2], offspring[1::2]):
+        for child1, child2 in zip(self[::2], self[1::2]):
             if random.random() < self.P_CROSSOVER:
                 self.__cx_one_point(child1, child2)
 
@@ -39,7 +44,7 @@ class Population(list):
     def get_copy(self):
         return Population(self.input_labels, self.output_labels, [individual.get_copy() for individual in self])
     
-    def get_population_copy()
+    # def get_population_copy()
     
     def get_best_individuals(self):
         best_fitness = max(self, key=lambda indiv: indiv.fitness).fitness

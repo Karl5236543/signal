@@ -3,7 +3,7 @@ from src.core.population import Population
 
 class Calibrator:
 
-    POOL_SIZE = 100
+    POPULATION_SIZE = 50
 
     def __init__(self, input_labels, output_labels, driver, goal_score):
         self.population = Population(input_labels=input_labels, output_labels=output_labels)
@@ -15,17 +15,20 @@ class Calibrator:
     def run(self):
         generation = 0
         
-        self.population.init_random(self.POOL_SIZE)
+        self.population.init_random(self.POPULATION_SIZE)
         current_population_copy = self.population.get_copy()
         
         while True:
             
-            self.test_population(self.population)
+            self.test_population(current_population_copy)
             
-            # for copy, individual in zip(current_population_copy, self.population):
-            #     individual.fitness = copy.fitness
-            
-            if self.is_goal_achieved(self.population):
+            for copy, individual in zip(current_population_copy, self.population):
+                individual.fitness = copy.fitness
+
+            for monitor in self._monitors:
+                monitor.show_fitness(self.population)
+
+            if self.is_goal_achieved(current_population_copy):
                 
                 best_individuals = self.population.get_best_individuals()
                 
@@ -67,4 +70,6 @@ class Calibrator:
         return self.driver.read_result()
     
     def set_monitors(self, monitors):
-        self._monitors = monitors
+        self._monitors = monitors            # for monitor in self._monitors:
+            #     monitor.show_fitness(self.population)
+            
