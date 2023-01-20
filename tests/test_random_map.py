@@ -2,7 +2,7 @@ from src.monitoring.bot_loader import BotDB
 from src.monitoring.monitors import ConsoleMonitor, GUIMonitor
 from src.core.individual import Individual
 from src.core.calibrator import Calibrator
-from src.drivers.test_driver import DriverTest
+from src.drivers.test_driver import OneMaxDriver
 from src.core.cellular_automaton.map import Map
 import random
 
@@ -11,7 +11,7 @@ if __name__ == '__main__':
 
     input_labels = ['a', 'b']
     output_labels = ['y1']
-    driver = DriverTest()
+    driver = OneMaxDriver()
     db = BotDB()
     monitor = GUIMonitor(1)
     ai = Individual(input_labels, output_labels)

@@ -4,7 +4,7 @@ from src.monitoring.bot_loader import BotDB
 from src.monitoring.monitors import ConsoleMonitor, GUIMonitor
 from src.core.individual import Individual
 from src.core.calibrator import Calibrator
-from src.drivers.test_driver import DriverTest
+from src.drivers.test_driver import OneMaxDriver
 import random
 
 

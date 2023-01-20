@@ -3,7 +3,7 @@ from src.core.population import Population
 
 class Calibrator:
 
-    POPULATION_SIZE = 50
+    POPULATION_SIZE = 100
 
     def __init__(self, input_labels, output_labels, driver, goal_score):
         self.population = Population(input_labels=input_labels, output_labels=output_labels)
@@ -14,12 +14,11 @@ class Calibrator:
 
     def run(self):
         generation = 0
-        
         self.population.init_random(self.POPULATION_SIZE)
-        current_population_copy = self.population.get_copy()
         
         while True:
             
+            current_population_copy = self.population.get_copy()
             self.test_population(current_population_copy)
             
             for copy, individual in zip(current_population_copy, self.population):
@@ -63,9 +62,11 @@ class Calibrator:
             individual.set_fitness(score)
             
     def test_individual(self, individual):
+        # print(f'ind: {individual.id}')
         for input in self.driver.yield_input():
             output = individual.find_result(input)
             self.driver.send_output(output)
+            # print(f'in: {list(input.values())}\tout: {list(output.values())}')
 
         return self.driver.read_result()
     

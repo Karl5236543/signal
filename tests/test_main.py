@@ -1,17 +1,16 @@
 from src.monitoring.bot_loader import BotDB
 from src.core.calibrator import Calibrator
-from src.drivers.test_driver import DriverTest
+from src.drivers.test_driver import OneMaxDriver
 from src.monitoring.monitors import GraphMonitor
+from src.drivers.constants import INPUT_LABELS, OUTPUT_LABELS
 
 if __name__ == '__main__':
 
-    input_labels = [str(i) for i in range(10)]
-    output_labels = [str(i) for i in range(10)]
-    driver = DriverTest()
-    goal_score = 4
+    driver = OneMaxDriver()
+    goal_score = 30
     db = BotDB()
 
-    calibrator = Calibrator(input_labels, output_labels, driver, goal_score)
+    calibrator = Calibrator(INPUT_LABELS, OUTPUT_LABELS, driver, goal_score)
     calibrator.set_monitors([GraphMonitor()])
     bot = calibrator.run()
     db.save_bot(f'best_bot', bot)

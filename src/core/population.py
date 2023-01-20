@@ -2,14 +2,13 @@
 
 import random
 from src.core.individual import Individual
-from deap.tools import selTournament
 
 
 class Population(list):
     
-    TOURN_SIZE = 3
+    TOURN_SIZE = 4
     P_CROSSOVER = 0.9
-    P_MUTATION = 0.1
+    P_MUTATION = 0.4
 
     def __init__(self, input_labels, output_labels, *args, **kwargs):
         self.input_labels = input_labels
@@ -20,12 +19,13 @@ class Population(list):
         offspring = Population(
             self.input_labels,
             self.output_labels,
-            selTournament(self, len(self), self.TOURN_SIZE)
+            self.sel_tournament()
         )
         
         offspring.crossover()
 
-        self.population = offspring.get_copy()
+        self.clear()
+        self.extend(offspring.get_copy())
         self.mutate()
 
     def init_random(self, size):
@@ -40,6 +40,13 @@ class Population(list):
         for individual in self:
             if random.random() < self.P_MUTATION:
                 individual.mutate()
+    
+    def sel_tournament(self):
+        chosen = []
+        for i in range(len(self)):
+            aspirants = random.sample(self, k=self.TOURN_SIZE)
+            chosen.append(max(aspirants, key=lambda indiv: indiv.fitness))
+        return chosen
                 
     def get_copy(self):
         return Population(self.input_labels, self.output_labels, [individual.get_copy() for individual in self])
@@ -51,6 +58,6 @@ class Population(list):
         return [individual for individual in self if individual.fitness == best_fitness]
     
     def __cx_one_point(self, child1, child2):
-        s = random.randint(1, len(child1.genome)-2)
+        s = random.randint(2, len(child1.genome)-3)
         child1.genome[s:], child2.genome[s:] = child2.genome[s:], child1.genome[s:]
     

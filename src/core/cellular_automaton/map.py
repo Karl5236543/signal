@@ -1,6 +1,7 @@
 
 
 import random
+import uuid
 from src.core.constants import ALL_BLOCK_TYPES, ALLOW_CREATE_BLOCK_TYPES, ALLOW_DELETE_BLOCK_TYPES, \
     BLOCK_TYPE_INPUT, BLOCK_TYPE_OUTPUT, BLOCK_TYPE_REGULATOR, BLOCK_TYPE_TRANSMITTER, BLOCK_TYPE_TRIGGER, \
     BLOCK_TYPE_TRIGGER_LOCKED
@@ -33,6 +34,7 @@ class Map:
         self.width = width
         self.height = height
         self.main_output_label = main_output_label
+        self.id = uuid.uuid4()
 
         self._field = {}
         self._block_types_map = {block_type: {} for block_type in ALL_BLOCK_TYPES}
@@ -48,6 +50,9 @@ class Map:
         
     def get_blocks_count(self, allow_block_types=ALL_BLOCK_TYPES):
         return sum([len(items) for items in [self._block_types_map[block_type] for block_type in allow_block_types]])
+    
+    def __repr__(self) -> str:
+        return f'<Map {self.id}>'
     
     def _init_empty_cords(self):
         for y in range(self.height):
