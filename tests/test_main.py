@@ -7,7 +7,7 @@ from src.drivers.constants import INPUT_LABELS, OUTPUT_LABELS
 if __name__ == '__main__':
 
     driver = OneMaxDriver()
-    goal_score = 30
+    goal_score = 36
     db = BotDB()
 
     calibrator = Calibrator(INPUT_LABELS, OUTPUT_LABELS, driver, goal_score)

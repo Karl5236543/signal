@@ -6,7 +6,7 @@ from src.core.individual import Individual
 from src.core.calibrator import Calibrator
 from src.drivers.test_driver import OneMaxDriver
 import random
-
+from src.drivers.constants import INPUT, INPUT_SET
 
 if __name__ == '__main__':
 
@@ -15,29 +15,12 @@ if __name__ == '__main__':
     ai = db.load_bot('best_bot')
     ai.set_monitors([monitor])
 
-    data = [
-        {
-            'input': {'a': 0, 'b': 0}, 
-            'output': {'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0}
-        },
-        {
-            'input': {'a': 0, 'b': 1}, 
-            'output': {'y1': 1, 'y2': 0, 'y3': 0, 'y4': 0}
-        },
-        {
-            'input': {'a': 1, 'b': 0}, 
-            'output': {'y1': 1, 'y2': 0, 'y3': 0, 'y4': 0}
-        },
-        {
-            'input': {'a': 1, 'b': 1}, 
-            'output': {'y1': 0, 'y2': 0, 'y3': 0, 'y4': 0}
-        },
-    ]
+    data = INPUT_SET
 
     # random.shuffle(data)
     # while True:
     random.shuffle(data)
     for data_set in data:
-        output = ai.find_result(data_set['input'])
-        print(f'input: {data_set["input"]} output: {output}')
+        output = ai.find_result(data_set[INPUT])
+        print(f'input: {data_set[INPUT]} output: {output}')
 

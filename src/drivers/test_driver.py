@@ -1,5 +1,5 @@
 import random
-from src.drivers.constants import INPUT_SET
+from src.drivers.constants import INPUT, INPUT_SET, OUTPUT
 
 class OneMaxDriver():
 
@@ -7,10 +7,14 @@ class OneMaxDriver():
         self.score = 0
 
     def yield_input(self):
-        yield from INPUT_SET
+        for current_set in INPUT_SET:
+            self.current_set = current_set
+            yield current_set[INPUT]
 
     def send_output(self, output):
-        self.score += sum(output.values())
+        for key, value in self.current_set[OUTPUT].items():
+            if output[key] == value:
+                self.score += 1
 
     def read_result(self):
         score = self.score 

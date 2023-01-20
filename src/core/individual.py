@@ -6,14 +6,14 @@ from src.core.cellular_automaton.map import Map
 
 class Individual:
 
-    DEFAULT_MAP_WIDTH = 10
-    DEFAULT_MAP_HEIGHT = 10
+    DEFAULT_MAP_WIDTH = 20
+    DEFAULT_MAP_HEIGHT = 20
     DEFAULT_BLOCKS_COUNT = 10
     MAP_UPDATE_ITERATION_COUNT = 20
     BLOCK_CREATE_MAX_COUNT = 5
     BLOCK_DELETE_MAX_COUNT = 5
     
-    P_MUTATION_REPLACE_GEN = 1
+    P_MUTATION_REPLACE_GEN = 0.3
     
     def __init__(self, input_labels=None, output_labels=None, genome=None, fitness=None):
         self.input_labels = input_labels
@@ -67,15 +67,10 @@ class Individual:
         return {gen.main_output_label: gen.get_main_output() for gen in self.genome}
 
     def mutate(self):
-        # TODO:
-        # можно создавать новые на замену случайному гену с некоторой вероятностью
-        
-        
         if random.random() < self.P_MUTATION_REPLACE_GEN:
             self.replace_random_gen()
             
         else:
-        
             gen = random.choice(self.genome)
             blocks_to_create_count = random.randint(1, self.BLOCK_CREATE_MAX_COUNT)
             blocks_to_delete_count = random.randint(1, self.BLOCK_DELETE_MAX_COUNT)
@@ -99,7 +94,7 @@ class Individual:
 
     def replace_random_gen(self):
         gen_index = random.choice(range(len(self.genome)))
-        gen = self.genome.pop(gen_index)
+        gen = self.genome[gen_index]
         new_genome = Map(
                 self.DEFAULT_MAP_WIDTH,
                 self.DEFAULT_MAP_HEIGHT,
@@ -109,7 +104,7 @@ class Individual:
             )
         
         new_genome.build_random_map(self.DEFAULT_BLOCKS_COUNT)
-        self.genome.append(new_genome)
+        self.genome[gen_index] = new_genome
     
     def get_copy(self):
         individual_copy = Individual(

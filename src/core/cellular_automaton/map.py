@@ -39,7 +39,7 @@ class Map:
         self._field = {}
         self._block_types_map = {block_type: {} for block_type in ALL_BLOCK_TYPES}
         
-        self._empty_cords = set()
+        self._empty_cords = []
         self.input_cords = {}
         self.output_cords = {}
         self.input_labels = input_labels
@@ -57,7 +57,7 @@ class Map:
     def _init_empty_cords(self):
         for y in range(self.height):
             for x in range(self.width):
-                self._empty_cords.add((x, y))
+                self._empty_cords.append((x, y))
 
     def build_map(self, field, block_types_map, empty_cords, input_cords, output_cords):
         self._field = field
@@ -179,7 +179,6 @@ class Map:
             block_copy = block.get_copy(surface=map_copy)
             field_copy[cords] = block_copy
             block_types_map[block_copy.get_type()][block_copy.get_cords()] = block_copy
-             
 
         map_copy.build_map(
             field_copy,
@@ -192,9 +191,7 @@ class Map:
         return map_copy
         
     def __get_random_empty_cords(self):
-        empty_cords = list(self._empty_cords)
-        cords = random.choice(empty_cords)
-        return cords
+        return random.choice(self._empty_cords)
 
     def __get_random_no_empty_cords(self, allow_block_types):
         block_type = random.choice(
@@ -220,7 +217,7 @@ class Map:
     def __remove_block(self, cords):
         block = self.__get_block(cords)
         self._field.pop(cords)
-        self._empty_cords.add(cords)
+        self._empty_cords.append(cords)
         self._block_types_map[block.get_type()].pop(block.get_cords())
         
     def __is_block_exist(self, cords):

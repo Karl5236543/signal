@@ -6,9 +6,9 @@ from src.core.individual import Individual
 
 class Population(list):
     
-    TOURN_SIZE = 4
-    P_CROSSOVER = 0.9
-    P_MUTATION = 0.4
+    TOURN_SIZE = 3
+    P_CROSSOVER = 0.8
+    P_MUTATION = 0.2
 
     def __init__(self, input_labels, output_labels, *args, **kwargs):
         self.input_labels = input_labels
@@ -22,6 +22,7 @@ class Population(list):
             self.sel_tournament()
         )
         
+        offspring.init_random(20)
         offspring.crossover()
 
         self.clear()
@@ -43,15 +44,13 @@ class Population(list):
     
     def sel_tournament(self):
         chosen = []
-        for i in range(len(self)):
+        for i in range(len(self) - 20):
             aspirants = random.sample(self, k=self.TOURN_SIZE)
             chosen.append(max(aspirants, key=lambda indiv: indiv.fitness))
         return chosen
-                
+
     def get_copy(self):
         return Population(self.input_labels, self.output_labels, [individual.get_copy() for individual in self])
-    
-    # def get_population_copy()
     
     def get_best_individuals(self):
         best_fitness = max(self, key=lambda indiv: indiv.fitness).fitness
