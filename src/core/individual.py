@@ -6,8 +6,8 @@ from src.core.cellular_automaton.map import Map
 
 class Individual:
 
-    DEFAULT_MAP_WIDTH = 20
-    DEFAULT_MAP_HEIGHT = 20
+    DEFAULT_MAP_WIDTH = 8
+    DEFAULT_MAP_HEIGHT = 8
     DEFAULT_BLOCKS_COUNT = 10
     MAP_UPDATE_ITERATION_COUNT = 20
     BLOCK_CREATE_MAX_COUNT = 5
