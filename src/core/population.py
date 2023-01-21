@@ -5,10 +5,11 @@ from src.core.individual import Individual
 
 
 class Population(list):
-    
+
     TOURN_SIZE = 3
     P_CROSSOVER = 0.8
     P_MUTATION = 0.2
+    P_REPLACE_GEN = 0.3   
 
     def __init__(self, input_labels, output_labels, *args, **kwargs):
         self.input_labels = input_labels
@@ -35,7 +36,7 @@ class Population(list):
     def crossover(self):
         for child1, child2 in zip(self[::2], self[1::2]):
             if random.random() < self.P_CROSSOVER:
-                self.__cx_one_point(child1, child2)
+                self.__cx_one_point_v2(child1, child2)
 
     def mutate(self):
         for individual in self:
@@ -60,3 +61,8 @@ class Population(list):
         s = random.randint(2, len(child1.genome)-3)
         child1.genome[s:], child2.genome[s:] = child2.genome[s:], child1.genome[s:]
     
+    def __cx_one_point_v2(self, child1, child2):
+        genome_length = len(child1.genome)
+        gen_indexes = random.sample(range(genome_length), k=random.randint(0, genome_length - 1))
+        for index in gen_indexes:
+            child1.genome[index], child2.genome[index] = child2.genome[index], child1.genome[index]
